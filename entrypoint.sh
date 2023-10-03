@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-
+env >> /etc/environment
 if ( [ -z "${MONGODB_USERNAME}" ] || [ -z "${MONGODB_PASSWORD}" ] );
 then
   echo "$CRON_EXPRESSION \
@@ -10,7 +10,8 @@ then
   --db $MONGODB_DATABASE \
   --gzip \
   --archive=$DESTINATION_PATH/"'$(date +"\%m_\%d_\%Y-\%H:\%M")'".gz \
-  > /proc/1/fd/1 2>/proc/1/fd/2" > crontab
+  > /proc/1/fd/1 2>/proc/1/fd/2;\
+  /cleanBackup.sh" > crontab
 else
   echo "$CRON_EXPRESSION \
   /usr/bin/mongodump \
@@ -22,7 +23,8 @@ else
   --authenticationDatabase $MONGODB_AUTH_DATABASE \
   --gzip \
   --archive=$DESTINATION_PATH/"'$(date +"\%m_\%d_\%Y-\%H:\%M")'".gz \
-  > /proc/1/fd/1 2>/proc/1/fd/2" > crontab
+  > /proc/1/fd/1 2>/proc/1/fd/2;\
+  /cleanBackup.sh" > crontab
 fi
 
 mv crontab /etc/cron.d/crontab

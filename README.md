@@ -23,7 +23,7 @@ DESTINATION_PATH=/var/mongo/backups
 Check the https://crontab.guru to find more crontab expressions.
 
 ```
-docker-compose build
+docker build -t tapas_backup .
 
 docker-compose up -d
 ```
