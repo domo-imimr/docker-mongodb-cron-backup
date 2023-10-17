@@ -16,8 +16,12 @@ RUN apt-get -y install cron
 # Making the crontab file based on env vars and put to the cron directory
 COPY entrypoint.sh /
 COPY cleanBackup.sh /
+COPY incr_backup.sh /
+COPY query.js /
 RUN chmod +x /entrypoint.sh
 RUN chmod +x /cleanBackup.sh
+RUN chmod +x /incr_backup.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Run the command on container startup

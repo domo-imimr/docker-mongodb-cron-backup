@@ -1,19 +1,8 @@
 #!/bin/sh
 set -e
 env >> /etc/environment
-if ( [ -z "${MONGODB_USERNAME}" ] || [ -z "${MONGODB_PASSWORD}" ] );
-then
-  echo "$CRON_EXPRESSION \
-  /usr/bin/mongodump \
-  --host $MONGODB_HOST \
-  --port $MONGODB_PORT \
-  --db $MONGODB_DATABASE \
-  --gzip \
-  --archive=$DESTINATION_PATH/"'$(date +"\%m_\%d_\%Y-\%H:\%M")'".gz \
-  > /proc/1/fd/1 2>/proc/1/fd/2;\
-  /cleanBackup.sh" > crontab
-else
-  echo "$CRON_EXPRESSION \
+
+echo "$CRON_EXPRESSION \
   /usr/bin/mongodump \
   --host $MONGODB_HOST \
   --port $MONGODB_PORT \
@@ -22,10 +11,11 @@ else
   --password $MONGODB_PASSWORD \
   --authenticationDatabase $MONGODB_AUTH_DATABASE \
   --gzip \
-  --archive=$DESTINATION_PATH/"'$(date +"\%m_\%d_\%Y-\%H:\%M")'".gz \
-  > /proc/1/fd/1 2>/proc/1/fd/2;\
-  /cleanBackup.sh" > crontab
-fi
+  --archive=$DESTINATION_PATH/"$(date +"\%m_\%d_\%Y-\%H:\%M")".gz \
+> /proc/1/fd/1 2>/proc/1/fd/2" > crontab
+
+echo "$INCREMENTAL_CRON_EXPRESSION \
+/incr_backup.sh;/cleanBackup.sh" >> crontab
 
 mv crontab /etc/cron.d/crontab
 
